@@ -1,0 +1,413 @@
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+      <!-- <script src="https://cdn.ckeditor.com/4.24.0-lts/standard/ckeditor.js"></script> -->
+      <title>BGE Internal App</title>
+      <link rel="icon" type="image/x-icon" href="images/bge-logo-favicon.png">
+      <style>
+
+      body {
+         font-family: "Poppins", sans-serif;
+         background-color: #f4f4f9;
+         margin: 0;
+         padding: 0;
+         display: flex;
+         height: 100v  h;
+      }
+      
+      .sidebar {
+         width: 250px;
+         background-color: #292929;
+         color: white;
+         height: 100vh;
+         padding: 20px;
+         box-sizing: border-box;
+         position: fixed;
+         top: 0;
+         left: 0;
+         display: flex;
+         flex-direction: column;
+         justify-content: flex-start;
+      }
+
+      .sidebar .logo {
+         margin-bottom: 30px;
+         text-align: center;
+      }
+
+      .sidebar .logo img {
+         width: 80%;
+      }
+
+      .sidebar .profile {
+         display: flex;
+         align-items: center;
+         margin-bottom: 30px;
+         background-color: #1e1e1e;
+         padding: 15px;
+         border-radius: 8px;
+         overflow: hidden;
+      }
+
+      .sidebar .profile img {
+         border-radius: 50%;
+         width: 60px;
+         height: 60px;
+         margin-right: 10px;
+      }
+
+      .sidebar .profile div {
+         display: flex;
+         flex-direction: column;
+         align-items: flex-start;
+         width: 100%;
+      }
+
+      .sidebar .profile div h3 {
+         margin: 0;
+         font-size: 16px;
+      }
+
+      .sidebar .profile div p {
+         margin: 2px 0;
+         font-size: 12px;
+         color: #bbb;
+         word-wrap: break-word;
+      }
+      .sidebar .profile div .role {
+         background-color: #4caf50;
+         color: white;
+         padding: 2px 5px;
+         border-radius: 5px;
+         font-size: 12px;
+      }
+
+      .sidebar nav {
+         display: flex;
+         flex-direction: column;
+      }
+
+      .sidebar nav a {
+         color: white;
+         text-decoration: none;
+         display: flex;
+         align-items: center;
+         padding: 10px 15px;
+         margin: 5px 0;
+         border-radius: 4px;
+         transition: background 0.3s;
+      }
+
+      .sidebar nav a:hover {
+         background-color: #34495e;
+      }
+
+      .sidebar nav a i {
+         margin-right: 10px;
+      }
+
+      .sidebar .submenu {
+         padding-left: 20px;
+      }
+
+      .content {
+         margin-left: 270px;
+         padding: 20px;
+         box-sizing: border-box;
+         flex: 1;
+         overflow-y: auto;
+      }
+
+      .header {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 20px;
+      }
+
+      .header h1 {
+         margin: 0;
+      }
+
+      .announcement-container {
+         background-color: #3ece3e13;
+         padding: 20px;
+         border-radius: 8px;
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         margin-bottom: 20px;
+         border: 1px solid green;
+      }
+
+      .announcement-container p {
+         margin: 0;
+         flex: 1;
+      }
+
+      .overview, .metrics {
+         display: flex;
+         flex-wrap: wrap;
+         gap: 20px;
+         margin-bottom: 20px;
+      }
+
+      .card {
+         background-color: white;
+         padding: 20px;
+         border-radius: 8px;
+         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+         flex: 1 1 calc(33.333% - 20px);
+         box-sizing: border-box;
+         justify-content: center;
+         align-items: center;
+         text-align: center;
+      }
+
+      .card.full-width {
+         flex: 1 1 100%;
+      }
+
+      .card h3, .card h1 {
+         margin: 0 0 10px 0;
+      }
+
+      .card p {
+         margin: 5px 0;
+      }
+
+      .card button {
+         background: linear-gradient(45deg, #34A853, #4285F4);
+         border: none;
+         color: white;
+         padding: 10px;
+         border-radius: 5px;
+         cursor: pointer;
+      }
+
+      .clients-and-events {
+         display: flex;
+         gap: 20px;
+         margin-bottom: 20px;
+      }
+
+      .table {
+         width: 100%;
+         border-collapse: collapse;
+         margin-top: 10px;
+      }
+
+      .table th, .table td {
+         border: 1px solid #ddd;
+         text-align: center;
+      }
+
+      .table th {
+         background-color: #f2f2f2;
+      }
+
+      .footer {
+         text-align: right;
+         margin-top: 20px;
+      }
+      .table {
+         width: 100%;
+         margin-bottom: 1rem;
+         vertical-align: middle;
+      }
+      .table th,
+      .table td {
+         padding: 0.75rem;
+         vertical-align: middle;
+      }
+      .table thead th {
+         vertical-align: bottom;
+      }
+
+      .more-section {
+         background-color: rgb(255, 255, 255);
+         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+         width: 405px;
+         padding: 20px;
+         color: rgb(0, 0, 0);
+         border-radius: 8px;
+      }
+
+      .sections {
+         border: 3px solid;
+         border-image: linear-gradient(45deg, #34A853, #4285F4) 1;
+         padding: 20px;
+         border-radius: 8px;
+      }
+      .sidebar .profile div .role {
+            background-color: #4caf50;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-size: 12px;
+            }
+      .sections-header {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+      }
+
+      .sections-header h3,
+      .sections-header span,
+      .sections-header p {
+         margin: 0;
+      }
+
+      .sections-header button {
+         background: linear-gradient(45deg, #34A853, #4285F4);
+         border: none;
+         color: white;
+         padding: 10px;
+         border-radius: 5px;
+         cursor: pointer;
+      }
+
+      .fourcards {
+         background-color: red;
+         display: flex;
+         color: rgb(0, 0, 0);
+         flex: 1;
+      }
+
+      .cardx {
+         background-color: white;
+         border-style: 1px solid;
+      }
+
+      .metrics .card {
+         flex: 1 1 calc(25% - 20px);
+      }
+
+      .adbutton {
+         background: linear-gradient(45deg, #34A853, #4285F4);
+         border: none;
+         color: white;
+         padding-left: 10px;
+         padding-right: 10px;
+         padding-top: 5px;
+         padding-bottom: 5px;
+         border-radius: 5px;
+      }
+
+      .overview .card h3 {
+         font-weight: bolder;
+         font-size: 40px;
+      }
+
+      .btn-success {
+         background-color: #4CAF50;
+         border-color: #4CAF50;
+         }
+      .btn-secondary {
+         background-color: #f1f3f5;
+         color: #333;
+         border: none;
+      }
+
+      .bottom-menu {
+         margin-top: auto;
+      }
+
+      .bottom-menu .nav-link img {
+         width: 80px;
+      }
+
+      /* Seach Button space */
+      .search-container input {
+         margin-right: 10px;
+      }
+
+      /* Sanitizing the p in the view of displaying announcement description  */
+      .announcement-description p:empty {
+         display: none;
+      }
+         
+      </style>
+   </head>
+   <body>
+      <div class="sidebar">
+         <div class="logo">
+            <img src="images/bge-logo-tr.png" alt="BGE Logo">
+         </div>
+         <div class="profile">
+            <img src="<%= user.profilePicture %>" alt="Profile Picture">
+            <div>
+               <h3><%= user.name %></h3>
+               <span class="role">Admin</span>
+            </div>
+         </div>
+         <nav class="nav flex-column">
+            <a class="nav-link text-white" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+            <a class="nav-link text-white" href="/hr-department"><i class="fa-solid fa-book-open-reader"></i> Management</a>
+            <a class="nav-link text-white" href="/members"><i class="fa-solid fa-address-card"></i>Members</a>
+            <a class="nav-link text-white" href="/departments"><i class="fa-solid fa-house"></i>Departments</a>
+            <a class="nav-link text-white" href="/services"><i class="fa-solid fa-briefcase"></i>Services</a>
+            <a class="nav-link text-white" href="/projects"><i class="fa-solid fa-folder-open"></i>Projects</a>
+            <a class="nav-link text-white" href="/clients"><i class="fa-solid fa-user"></i>Clients</a>
+            <a class="nav-link text-white" href="#"><i class="fa-solid fa-square-poll-vertical"></i>Reports</a>
+            <!-- <a class="nav-link text-white" href="#" data-bs-toggle="collapse" data-bs-target="#it-submenu" aria-expanded="false" aria-controls="it-submenu">
+            <i class="fa-solid fa-sitemap"></i>IT Department <i class="fas fa-caret-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="it-submenu">
+               <a class="nav-link text-white ps-5" href="/it/item-inventory"><i class="fa-solid fa-box me-2"></i>Item Inventory</a>
+               <a class="nav-link text-white ps-5" href="/it/item-distributed"><i class="fa-solid fa-diagram-project"></i>Item Distributed</a>
+               <a class="nav-link text-white ps-5" href="/it/category-management"><i class="fa-solid fa-list me-2"></i>Category Management</a>
+            </div> -->
+         </nav>
+      
+          <!-- IT Department Modal -->
+          <div class="btn-group bg-primary">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            IT Department
+            </button>
+            <div class="dropdown-menu p-1">
+               <a class="dropdown-item" href="/it/item-inventory">Inventory</a>
+               <a class="dropdown-item" href="/it/item-distributed">Item Distributed</a>
+               <div class="dropdown-divider"></div>
+               <a class="dropdown-item" href="/it/category-management">Category Management</a>
+            </div>
+         </div>
+         <!-- GreatDay Login/Logout -->
+         <div class="bottom-menu">
+            <a class="nav-link text-white" href="https://app.greatdayhr.com/">
+               <img src="/images/GREAT-DAY-LOGO.png" alt="Time in - Time Out"><u>Attendance</u>   
+            </a>
+         </div>
+      </div>
+      </div>
+      <!-- Main Content -->
+      <div class="content">
+         <div class="header">
+            <h1>Department: Digital Marketing</h1>
+            
+            <div>
+               <span>Admin, <a href="/auth/logout">Logout</a></span>
+            </div>
+         </div>
+
+         <div class="announcement-container">
+
+            <% if (announcements && announcements.length > 0) { %>
+               <% announcements.forEach(announcement => { %>
+                  <div class="announcement-item">
+                        <h3><%= announcement.title %></h3>
+                        <div class="announcement-description"><%- announcement.description %></div>
+                  </div>
+               <% }) %>
+            <% } else { %>
+               <p>No announcements available.</p>
+            <% } %>
+      </div>

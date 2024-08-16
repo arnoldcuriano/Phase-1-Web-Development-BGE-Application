@@ -1,0 +1,94 @@
+
+    <%- include('partials/header') %>
+ 
+        <div class="clients-and-events">
+            <div class="card">
+                <h3>Members</h3>
+                <form action="/members/add" method="POST">
+                    <input type="text" name="name" placeholder="Name" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="text" name="role" placeholder="Role" required>
+                    <button type="submit">Add Member</button>
+                </form>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% members.forEach(member => { %>
+                        <tr>
+                            <td><%= member.name %></td>
+                            <td><%= member.email %></td>
+                            <td><%= member.role %></td>
+                            <td><%= member.date.toDateString() %></td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card">
+                <h3>Departments</h3>
+                <form action="/departments/add" method="POST">
+                    <input type="text" name="name" placeholder="Department Name" required>
+                    <input type="text" name="description" placeholder="Description" required>
+                    <button type="submit">Add Department</button>
+                </form>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% departments.forEach(department => { %>
+                        <tr>
+                            <td><%= department.name %></td>
+                            <td><%= department.description %></td>
+                            <td><%= department.date.toDateString() %></td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card">
+                <h3>Services</h3>
+                <form action="/services/add" method="POST">
+                    <input type="text" name="name" placeholder="Service Name" required>
+                    <input type="text" name="description" placeholder="Description" required>
+                    <button type="submit">Add Service</button>
+                </form>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% services.forEach(service => { %>
+                        <tr>
+                            <td><%= service.name %></td>
+                            <td><%= service.description %></td>
+                            <td><%= service.date.toDateString() %></td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="footer">
+            <p id="current-date">Date: January 01, 2024</p>
+        </div>
+    </div>
+    
+
+
+    <%- include('partials/footer') %>

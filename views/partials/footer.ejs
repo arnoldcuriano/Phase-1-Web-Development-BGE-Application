@@ -1,0 +1,20 @@
+<div class="footer">
+    <p id="current-date">Date: January 01, 2024</p>
+</div>
+
+<script>
+    function updateDate() {
+        const dateElement = document.getElementById('current-date');
+        const currentDate = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        dateElement.textContent = 'Date: ' + currentDate.toLocaleDateString('en-US', options);
+    }
+    window.onload = updateDate;
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+</body>
+</html>

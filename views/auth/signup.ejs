@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            background: linear-gradient(to right, #43cea2 50%, #185a9d 50%);
+        }
+        .left-panel, .right-panel {
+            width: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .left-panel {
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            flex-direction: column;
+            color: white;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+        .left-panel h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .left-panel .item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            width: 100%;
+            max-width: 400px;
+        }
+        .left-panel .item img {
+            width: 40px;
+            height: 40px;
+            margin-right: 20px;
+        }
+        .left-panel .item div {
+            display: flex;
+            flex-direction: column;
+        }
+        .left-panel .item div p {
+            margin: 0;
+        }
+        .left-panel .item div .title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .left-panel .item div .description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .left-panel .item div .arrow {
+            margin-left: auto;
+            color: white;
+            font-size: 24px;
+        }
+        .right-panel {
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .right-panel img.logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 150px; /* Adjust the width as needed */
+        }
+        .login-form {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .login-form h2 {
+            margin: 0 0 20px 0;
+            font-size: 24px;
+            text-align: center;
+        }
+        .login-form .form-control, .login-form .form-button, .login-form .google-login {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        .login-form .form-control {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .login-form .form-button {
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .login-form .google-login {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .login-form .google-login img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        .login-form a {
+            color: #43cea2;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .login-form a:hover {
+            text-decoration: underline;
+        }
+        .icon {
+            border-radius: 8px;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8x;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="left-panel">
+        <h1>Welcome back</h1>
+        <div class="item">
+            <img src="./images/icons8-globe-50.png" alt="Icon" class="icon">
+            <div>
+                <p class="title">Visit our Main Website</p>
+                <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            </div>
+            <div class="arrow">&rarr;</div>
+        </div>
+        <div class="item">
+            <img src="/images/icons8-time-50.png" alt="Icon" class="icon">
+            <div>
+                <p class="title">Login to your GreatDay Account</p>
+                <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            </div>
+            <div class="arrow">&rarr;</div>
+        </div>
+        <div class="item">
+            <img src="images/icons8-ticket-64.png" alt="Icon" class="icon">
+            <div>
+                <p class="title">Need Support?</p>
+                <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            </div>
+            <div class="arrow">&rarr;</div>
+        </div>
+    </div>
+    <div class="right-panel">
+        <img src="./images/bge-logo-tr.png" alt="BGE Logo" class="logo">
+        <div class="login-form">
+            <h2>Signup</h2>
+            <p style="text-align: center;">Enter your account to login to this app</p>
+            <form action="/auth/signup" method="GET">
+                <input type="FullName" name="FullName" placeholder="Jhon Doe" class="form-control" required>
+                <input type="email" name="email" placeholder="email.bgecorp@gmail.com" class="form-control" required>
+                <input type="password" name="password" placeholder="Create Password" class="form-control" required>
+                <!-- <a href="/auth/forgot">Forgot Password?</a> -->
+                <button type="submit" class="form-button">Create</button>
+            </form>
+            <div class="google-login" onclick="window.location.href='/auth/google'">
+                <img src="./images/icons8-google-48.png" alt="Google">
+                <span>Google</span>
+            </div>
+            <input type="checkbox" id="checked"><a href="#">Already have an account<strong>Signin</strong></a>
+        </div>
+    </div>
+</body>
+</html>

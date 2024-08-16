@@ -1,0 +1,642 @@
+<head>
+    <!-- Meta tags, styles, etc. -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>BGE Internal App</title>
+    <link rel="icon" type="image/x-icon" href="images/bge-logo-favicon.png">
+    <style>
+        /* Your existing styles */
+        body {
+            font-family: "Poppins", sans-serif;
+            background-color: #E8EDF6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(45deg, #292929, #1a1a1a);
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .sidebar .logo {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .sidebar .logo img {
+            width: 80%;
+        }
+
+        .sidebar .profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #1a1a1a;
+        }
+
+        .sidebar .profile img {
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            margin-right: 10px;
+        }
+
+        .sidebar .profile div {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .sidebar .profile div h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .sidebar .profile div p {
+            margin: 2px 0;
+            font-size: 12px;
+            color: #bbb;
+        }
+
+        .sidebar .profile div .role {
+            background-color: #4caf50;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar nav a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .sidebar nav a:hover {
+            background-color: #34495e;
+        }
+
+        .sidebar nav a i {
+            margin-right: 10px;
+        }
+
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+            box-sizing: border-box;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .announcement-container {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border: 1px solid #42a5f5;
+        }
+
+        .announcement-container p {
+            margin: 0;
+            flex: 1;
+        }
+
+        .overview,
+        .metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex: 1 1 calc(25% - 20px);
+            box-sizing: border-box;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card.full-width {
+            flex: 1 1 100%;
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .card p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .card button {
+            background: linear-gradient(45deg, #34A853, #4285F4);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .widget {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-height: 500px;
+        }
+
+        .widget .sections-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .widget .event-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid;
+        }
+
+        .widget .event-details {
+            flex: 1;
+        }
+
+        .widget .event-date {
+            margin-left: 20px;
+            padding: 2px 10px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .widget .scrollable {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+     /* Cards Background */
+     .member-bg {
+            background: url("../uploads/try.gif");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .department-bg {
+            background: url("../uploads/department-background.gif");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .services-bg {
+            background: url("../uploads/Services.gif");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .projects-bg {
+            background: url("../uploads/Project.gif");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        /* Footer Cards Background */
+        .metrix-blue {
+            background: url("../uploads/In\ Progress\ GIF.gif");
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: white;
+        }
+
+        .metrix-yellow {
+            background-image: url("../uploads/Project\ GIF.gif");
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: white;
+        }
+
+        .metrix-green {
+            background-image: url("../uploads/Completed\ GIF.gif");
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: white;
+        }
+
+        /* button gradient */
+        .btngradient {
+            background: linear-gradient(45deg, #34A853, #4285F4);
+            color: white;
+            border-style: none;
+            width: 100%;
+            padding: 0 20px 0 20px;
+            border-radius: 5px;
+        }
+
+        /* Upcoming Events */
+        .sections-header {
+            border-style: none;
+            border-radius: 8px;
+        }
+
+        /* Metrics card */
+        .metrics {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .metrics .card {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+
+        /* Greatday Position */
+        .bottom-menu {
+            margin-top: auto;
+        }
+
+        .bottom-menu .nav-link img {
+            width: 80px;
+        }
+
+        .footer {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        /* Clients and Events*/
+        .clients-and-events {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .clients-section {
+            flex: 2;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .clients-section {
+            flex: 2;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-height: 500px; /* Ensure max-height */
+            overflow-y: auto; /* Add scrollbar if content overflows */
+            position: relative;
+        }
+
+        .dataTables_wrapper .dataTables_paginate {
+            float: none;
+            text-align: center;
+        }
+
+        .clients-section .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: white;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .clients-section .sections-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: white;
+            padding: 10px 0;
+        }
+
+        .clients-section .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: white;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="images/bge-logo-tr.png" alt="BGE Logo">
+        </div>
+        <div class="profile">
+            <img src="<%= user.profilePicture %>" alt="Profile Picture">
+            <div>
+                <h3>
+                    <%= user.name %>
+                </h3>
+                <span class="role">Admin</span>
+            </div>
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link text-white" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+            <a class="nav-link text-white" href="/hr-department"><i class="fa-solid fa-book-open-reader"></i>
+                Management</a>
+            <a class="nav-link text-white" href="/members"><i class="fa-solid fa-address-card"></i>Members</a>
+            <a class="nav-link text-white" href="/departments"><i class="fa-solid fa-house"></i>Departments</a>
+            <a class="nav-link text-white" href="/services"><i class="fa-solid fa-briefcase"></i>Services</a>
+            <a class="nav-link text-white" href="/projects"><i class="fa-solid fa-folder-open"></i>Projects</a>
+            <a class="nav-link text-white" href="/clients"><i class="fa-solid fa-user"></i>Clients</a>
+            <a class="nav-link text-white" href="#"><i class="fa-solid fa-square-poll-vertical"></i>Reports</a>
+        </nav>
+        <!-- IT Department Modal -->
+       <!-- IT Department Dropdown -->
+<div class="btn-group">
+    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="itDepartmentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        IT Department
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="itDepartmentDropdown">
+        <li><a class="dropdown-item" href="/it/item-inventory">Inventory</a></li>
+        <li><a class="dropdown-item" href="/it/item-distributed">Item Distributed</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="/it/category-management">Category Management</a></li>
+    </ul>
+</div>
+        <!-- GreatDay  -->
+        <div class="bottom-menu">
+            <a class="nav-link text-white" href="https://app.greatdayhr.com/">
+                <img src="/images/GREAT-DAY-LOGO.png" alt="Time in - Time Out"><u>Attendance</u>
+            </a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <h1>Dashboard</h1>
+            <div class="logout-container">
+                <a href="/auth/logout"><button class="bg-primary text-white border rounded p-1" type="submit">Logout</button></a>
+            </div>
+        </div>
+
+        <div class="announcement-container">
+            <% if (announcements && announcements.length > 0) { %>
+                <% announcements.forEach(announcement => { %>
+                    <div class="announcement-item">
+                        <h3><%= announcement.title %></h3>
+                        <p class="announcement-description"><%- announcement.description %></p>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No announcements available.</p>
+            <% } %>
+        </div>
+
+        <div class="overview text-white">
+            <div class="card member-bg">
+                <h3><%= members.length %></h3>
+                <p class="text-white">Members</p>
+            </div>
+            <div class="card department-bg text-white">
+                <h3><%= departments.length %></h3>
+                <p class="text-white">Departments</p>
+            </div>
+            <div class="card services-bg">
+                <h3><%= services.length %></h3>
+                <p class="text-white">Services</p>
+            </div>
+            <div class="card projects-bg">
+                <h3><%= totalProjects %></h3>
+                <p class="text-white">Projects</p>
+            </div>
+        </div>
+
+        <div class="clients-and-events">
+            <div class="clients-section">
+                <div class="sections-header text-center" class="sticky-header">
+                    <h2>Clients</h2>
+                </div>
+                <div class="table-responsive">
+                    <table id="dashboardClientTable" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Company</th>
+                                <th>Projects</th>
+                                <th>Terms File</th>
+                                <th>Services</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% clients.forEach((client, index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td><%= client.name %></td>
+                                <td>
+                                    <% client.projects.forEach(project => { %>
+                                    <div><%= project.name %></div>
+                                    <% }) %>
+                                </td>
+                                <td>
+                                    <% client.projects.forEach(project => { %>
+                                    <% project.fileUpload.forEach(file => { %>
+                                    <div class="file-link">
+                                        <% let fileName = file.split('-').slice(1).join('-'); %>
+                                        <span class="file-name"><%= fileName %></span>
+                                    </div>
+                                    <% }) %>
+                                    <% }) %>
+                                </td>
+                                <td>
+                                    <% client.services.forEach(service => { %>
+                                    <div><%= service.name %></div>
+                                    <% }) %>
+                                </td>
+                                <td>
+                                    <span class="badge bg-<%= client.status === 'Completed' ? 'success' : client.status === 'On Progress' ? 'primary' : client.status === 'Maintenance' ? 'warning' : 'danger' %>">
+                                        <%= client.status %>
+                                    </span>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                    <!-- Pagination -->
+                    <div id="clientTablePagination"></div>
+                </div>
+            </div>
+
+            <div class="widget">
+                <div class="sections-header">
+                    <h2>Upcoming Events</h2>
+                </div>
+                <div class="scrollable" id="events-container">
+                    <% if (events && events.length > 0) { %>
+                    <% events.forEach((event, index) => { %>
+                    <div class="event-card" data-index="<%= index %>">
+                        <div class="event-details">
+                            <h4><%= event.title %></h4>
+                            <p><%= event.details %></p>
+                        </div>
+                        <div class="event-date p-2 rounded text-white">
+                            <%= new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                        </div>
+                    </div>
+                    <% }) %>
+                    <% } else { %>
+                    <p>No upcoming events.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics">
+            <div class="card metrix-blue">
+                <h3><%= inProgressProjects %></h3>
+                <p class="text-white">In Progress</p>
+            </div>
+            <div class="card metrix-green">
+                <h3><%= completedProjects %></h3>
+                <p class="text-white">Completed</p>
+            </div>
+            <div class="card metrix-yellow">
+                <h3><%= maintenanceProjects %></h3>
+                <p class="text-white">Maintenance</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p id="current-date">Date: January 01, 2024</p>
+        </div>
+    </div>
+
+    <!-- Include Sortable.js and Other Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+        <script>
+            function updateDate() {
+            const dateElement = document.getElementById('current-date');
+            const currentDate = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            dateElement.textContent = 'Date: ' + currentDate.toLocaleDateString('en-US', options);
+        }
+        window.onload = updateDate;
+    
+        $(document).ready(function () {
+            // Add colors to event cards
+            const colors = ['#F37833', '#A61C1F', '#0047A0', '#16AA4D', 'orange'];
+            $('#events-container .event-card').each(function (index) {
+                const color = colors[index % colors.length];
+                $(this).css('border-left-color', color);
+                $(this).find('.event-date').css({
+                    'background-color': color,
+                    'border-radius': '5px',
+                    'padding': '2px 10px',
+                    'color': 'white'
+                });
+            });
+    
+            // Initialize Sortable
+            const sortable = new Sortable(document.getElementById('events-container'), {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                onEnd: function (evt) {
+                    const itemEl = evt.item;
+                    const newIndex = evt.newIndex;
+                    console.log('Moved item with ID:', $(itemEl).data('index'), 'to position:', newIndex);
+                }
+            });
+    
+            // Initialize DataTable with scrolling enabled
+            $('#dashboardClientTable').DataTable({
+                paging: true,  // Enable pagination
+                info: false,   // Disable table information
+                searching: false, // Disable search functionality
+                autoWidth: false, // Disable auto width
+                scrollY: 'calc(100% - 50px)', // Enable scrolling within the DataTable
+                scrollCollapse: true, // Allow table to shrink to fit content
+            });
+        });
+        </script>
+</body>

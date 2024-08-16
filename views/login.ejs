@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="icon" type="image/x-icon" href="">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <style>
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+            
+        }
+        .left-panel {
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            color: white;
+        }
+        .left-panel h1 {
+            font-size: 48px;
+            margin-bottom: 30px;
+        }
+        .left-panel .item {
+            margin: 15px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            position: relative;
+        }
+        .left-panel .title {
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        .left-panel .arrow {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .right-panel {
+                order: -1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid h-100">
+        <div class="row h-100 no-gutters">
+            <div class="col-md-6 left-panel d-flex flex-column align-items-center justify-content-center">
+                <h1>Welcome back</h1>
+                <div class="item d-flex align-items-center w-75">
+                    <a href="https://beglobalecommercecorp.com/" target="_blank"><img src="/images/icons8-globe-50.png" alt="Icon" class="mr-3"></a>
+                    <div class="flex-grow-1">
+                        <p class="title">Visit our Main Website</p>
+                        <p class="text-muted">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                    </div>
+                    <div class="arrow">&rarr;</div>
+                </div>
+                <div class="item d-flex align-items-center w-75">
+                    <a href="https://app.greatdayhr.com/" target="_blank"><img src="/images/icons8-time-50.png" alt="Icon" class="mr-3"></a>
+                    <div class="flex-grow-1">
+                        <p class="title">Login to your GreatDay Account</p>
+                        <p class="text-muted">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                    </div>
+                    <div class="arrow">&rarr;</div>
+                </div>
+                <div class="item d-flex align-items-center w-75">
+                    <img src="images/icons8-ticket-64.png" alt="Icon" class="mr-3">
+                    <div class="flex-grow-1">
+                        <p class="title">Need Support?</p>
+                        <p class="text-muted">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                    </div>
+                    <div class="arrow">&rarr;</div>
+                </div>
+            </div>
+            <div class="col-md-6 right-panel d-flex flex-column align-items-center justify-content-center position-relative">
+                <img src="./images/bge-logo-tr.png" alt="BGE Logo" class="position-absolute" style="top: 20px; left: 20px; width: 150px;">
+                <div class="login-form bg-white p-4 rounded shadow w-75">
+                    <h2 class="text-center">Signin</h2>
+                    <p class="text-center">Enter your account to login to this app</p>
+                    <form action="/auth/login" method="POST">
+                        <div class="form-group">
+                            <input type="email" name="email" placeholder="email.bgecorp@gmail.com" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="password" placeholder="********" class="form-control" required>
+                        </div>
+                        <a href="/auth/forgot" class="d-block text-center mb-3">Forgot Password?</a>
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </form>
+                    <div class="google-login btn btn-outline-secondary btn-block mt-3 d-flex align-items-center justify-content-center" onclick="window.location.href='/auth/google'">
+                        <img src="./images/icons8-google-48.png" alt="Google" class="mr-2" style="width: 20px; height: 20px;">
+                        <span>Google</span>
+                    </div>
+                    <a href="#" class="d-block text-center mt-3">Don’t have an Account? Signup</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
