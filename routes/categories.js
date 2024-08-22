@@ -11,33 +11,37 @@ const isAuthenticated = (req, res, next) => {
   next();
 };
 
+// Centralized error handling middleware
+const asyncHandler = fn => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
 // Get all categories and announcements with pagination
-router.get('/', isAuthenticated, async (req, res) => {
-  try {
-    // Fetch paginated categories
-    const { categories, totalPages, currentPage } = await categoryController.getCategories(req, res, true);
-    
-    // Fetch announcements sorted by date
-    const announcements = await Announcement.find().sort({ date: -1 });
-    
-    // Render categories and announcements
-    res.render('categories', { categories, announcements, user: req.user, totalPages, currentPage });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server Error');
-  }
-});
+router.get('/', isAuthenticated, asyncHandler(async (req, res) => {
+  // Fetch paginated categories and announcements
+  const { categories, totalPages, currentPage } = await categoryController.fetchCategories(req);
+  const announcements = await Announcement.find().sort({ date: -1 });
+
+  // Render categories and announcements
+  res.render('categories', { categories, announcements, user: req.user, totalPages, currentPage });
+}));
 
 // Add a new category
-router.post('/add', isAuthenticated, categoryController.addCategory);
+router.post('/add', isAuthenticated, asyncHandler(categoryController.addCategory));
 
 // Update an existing category
-router.post('/update', isAuthenticated, categoryController.updateCategory);
+router.post('/update', isAuthenticated, asyncHandler(categoryController.updateCategory));
 
 // Check if a category has child categories and provide reassignment options
-router.get('/check-child-categories/:id', isAuthenticated, categoryController.checkChildCategories);
+router.get('/check-child-categories/:id', isAuthenticated, asyncHandler(categoryController.checkChildCategories));
 
 // Delete a category by ID
-router.post('/delete/:id', isAuthenticated, categoryController.deleteCategory);
+router.post('/delete/:id', isAuthenticated, asyncHandler(categoryController.deleteCategory));
+
+// Error handling middleware
+router.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong. Please try again later.');
+});
 
 module.exports = router;
