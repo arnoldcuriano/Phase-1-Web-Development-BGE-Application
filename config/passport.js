@@ -8,7 +8,7 @@ module.exports = function(passport) {
     passport.use(new GoogleStrategy({
         clientID: config.google.clientID,
         clientSecret: config.google.clientSecret,
-        callbackURL: '/auth/google/callback'
+        callbackURL: 'https://phase-1-web-development-bge-application.vercel.app/auth/google/callback'
     }, async (accessToken, refreshToken, profile, done) => {
         const newUser = {
             googleId: profile.id,
