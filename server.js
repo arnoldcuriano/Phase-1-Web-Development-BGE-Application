@@ -10,7 +10,8 @@ const fs = require('fs');
 // Initialize Express
 const app = express();
 app.set('view engine', 'ejs');
-app.use(express.static('public')); // Serve static files from 'public' folder
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 // Ensure 'uploads' directory exists
 const uploadDir = path.join(__dirname, 'uploads');
