@@ -10,7 +10,7 @@ const fs = require('fs');
 // Initialize Express
 const app = express();
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public', 'favicon.ico')));
 
 
 // Ensure 'uploads' directory exists
