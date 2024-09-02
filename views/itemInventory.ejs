@@ -408,10 +408,22 @@
             <span>Admin, <a href="/auth/logout">Logout</a></span>
          </div>
       </div>
+      <!-- Announcement Section -->
       <div class="announcement-container">
-         <p>Announcement: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-            labore et dolore magna aliqua...</p>
-      </div>
+         <% if (announcements && announcements.length> 0) { %>
+            <% announcements.forEach(announcement=> { %>
+               <div class="announcement-item">
+                  <h3>
+                     <%= announcement.title %>
+                  </h3>
+                  <div class="announcement-description"><%- announcement.description %></div>
+               </div>
+               <% }) %>
+                  <% } else { %>
+                     <p>No announcements available.</p>
+                     <% } %>
+            </div>
+      <!-- Main Content -->
       <div class="">
          <div class="mt-5">
             <div class="d-flex justify-content-between align-items-center mb-3">

@@ -1,5 +1,6 @@
 const ItemInventory = require('../models/ItemInventory');
 const Category = require('../models/Category');
+const Announcement = require('../models/Announcement'); // Import Announcement model
 
 
 // Get items with pagination
@@ -8,10 +9,10 @@ exports.getItems = async (req, res) => {
     const itemsPerPage = 10; // Define the number of items per page
     const page = parseInt(req.query.page) || 1; // Default to page 1 if no page parameter is provided
     const skip = (page - 1) * itemsPerPage;
-    
+
     const totalItems = await ItemInventory.countDocuments(); // Ensure you use the correct model
     const totalPages = Math.ceil(totalItems / itemsPerPage);
-    
+
     const items = await ItemInventory.find()
       .skip(skip)
       .limit(itemsPerPage)
@@ -19,13 +20,17 @@ exports.getItems = async (req, res) => {
 
     // Fetch all categories for dropdown
     const categories = await Category.find();
-~
+
+    // Fetch all announcements
+    const announcements = await Announcement.find(); // Fetch all announcements from the database
+
     res.render('itemInventory', {
       items,
       currentPage: page,
       totalPages,
       itemsPerPage, // Pass itemsPerPage to the view
-      categories // Pass categories to the view
+      categories, // Pass categories to the view
+      announcements // Pass announcements to the view
     });
   } catch (error) {
     console.error('Error fetching items:', error.message); // Improved error logging
