@@ -7,6 +7,7 @@ const MongoStore = require('connect-mongo');
 const path = require('path');
 const fs = require('fs');
 
+
 // Initialize Express
 const app = express();
 app.set('view engine', 'ejs');
