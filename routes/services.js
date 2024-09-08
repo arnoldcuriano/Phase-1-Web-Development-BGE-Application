@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Service = require('../models/Service');
-const Announcement = require('../models/Announcement'); // Import Announcement model
+const Announcement = require('../models/Announcement');
 const serviceController = require('../controllers/serviceController');
 
 // Get all services and announcements with pagination
@@ -9,21 +9,43 @@ router.get('/', async (req, res) => {
   if (!req.user) {
     return res.redirect('/auth/login');
   }
-  const perPage = 10;
-  const currentPage = parseInt(req.query.page) || 1;
+
+  const start = parseInt(req.query.start) || 0;
+  const length = parseInt(req.query.length) || 10;
+  const search = req.query.search ? req.query.search.value : '';
 
   try {
-    const totalServices = await Service.countDocuments();
-    const totalPages = Math.ceil(totalServices / perPage);
-    const services = await Service.find()
-      .skip((currentPage - 1) * perPage)
-      .limit(perPage);
-    const announcements = await Announcement.find().sort({ date: -1 }); // Fetch announcements
+    let query = {};
+    if (search) {
+      query = {
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } }
+        ]
+      };
+    }
+
+    const totalServices = await Service.countDocuments(query);
+    const services = await Service.find(query)
+      .skip(start)
+      .limit(length);
+    const announcements = await Announcement.find().sort({ date: -1 });
 
     if (req.xhr) {
-      res.json({ services, currentPage, totalPages, totalServices, announcements });
+      res.json({
+        draw: parseInt(req.query.draw),
+        recordsTotal: totalServices,
+        recordsFiltered: totalServices,
+        data: services,
+        announcements: announcements
+      });
     } else {
-      res.render('services', { services, announcements, user: req.user, currentPage, totalPages, totalServices });
+      res.render('services', { 
+        services, 
+        announcements, 
+        user: req.user, 
+        totalServices 
+      });
     }
   } catch (err) {
     console.error(err);
@@ -33,16 +55,24 @@ router.get('/', async (req, res) => {
 
 // Add a new service
 router.post('/add', async (req, res) => {
-  const { name, description, price } = req.body;
+  const { name, description, price, currency } = req.body;
+
+  if (!name || !currency || price === undefined) {
+    return res.status(400).send('Missing required fields');
+  }
+
   try {
-    const newService = new Service({ name, description, price });
+    const newService = new Service({ 
+      name, 
+      description, 
+      price: parseFloat(price), 
+      currency 
+    });
+
     await newService.save();
-    if (req.xhr) {
-      return res.status(200).json({ message: 'Service added successfully!' });
-    }
-    res.redirect('/services');
+    res.status(200).json({ message: 'Service added successfully!' });
   } catch (error) {
-    console.error(error);
+    console.error('Error adding service:', error);
     res.status(500).json({ message: 'Server Error', error });
   }
 });
@@ -52,10 +82,7 @@ router.post('/update', async (req, res) => {
   const { id, name, description, price } = req.body;
   try {
     await Service.findByIdAndUpdate(id, { name, description, price });
-    if (req.xhr) {
-      return res.status(200).json({ message: 'Service updated successfully!' });
-    }
-    res.redirect('/services');
+    res.status(200).json({ message: 'Service updated successfully!' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error', error });
@@ -67,10 +94,7 @@ router.post('/delete/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await Service.findByIdAndDelete(id);
-    if (req.xhr) {
-      return res.status(200).json({ message: 'Service deleted successfully!' });
-    }
-    res.redirect('/services');
+    res.status(200).json({ message: 'Service deleted successfully!' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error', error });
