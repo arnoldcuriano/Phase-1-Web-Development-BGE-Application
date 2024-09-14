@@ -1,39 +1,83 @@
 const ItemInventory = require('../models/ItemInventory');
 const Category = require('../models/Category');
-const Announcement = require('../models/Announcement'); // Import Announcement model
+const Announcement = require('../models/Announcement');
 
+// Helper function to send JSON response
+const sendJsonResponse = (res, status, data) => {
+  res.status(status).json(data);
+};
 
 // Get items with pagination
 exports.getItems = async (req, res) => {
   try {
-    const itemsPerPage = 10; // Define the number of items per page
-    const page = parseInt(req.query.page) || 1; // Default to page 1 if no page parameter is provided
-    const skip = (page - 1) * itemsPerPage;
+    const isAjax = req.xhr || req.headers.accept.indexOf('json') > -1;
 
-    const totalItems = await ItemInventory.countDocuments(); // Ensure you use the correct model
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    // Common query setup
+    const searchValue = isAjax ? req.body.search.value : req.query.search;
+    let query = {};
+    if (searchValue) {
+      query = {
+        $or: [
+          { itemName: { $regex: searchValue, $options: 'i' } },
+          { serialNumber: { $regex: searchValue, $options: 'i' } }
+        ]
+      };
+    }
 
-    const items = await ItemInventory.find()
-      .skip(skip)
-      .limit(itemsPerPage)
-      .populate('category'); // Populate category if it's a reference
+    const totalItems = await ItemInventory.countDocuments(query);
 
-    // Fetch all categories for dropdown
-    const categories = await Category.find();
+    if (isAjax) {
+      // Handle DataTables AJAX request
+      const draw = parseInt(req.body.draw);
+      const start = parseInt(req.body.start);
+      const length = parseInt(req.body.length);
 
-    // Fetch all announcements
-    const announcements = await Announcement.find(); // Fetch all announcements from the database
+      const items = await ItemInventory.find(query)
+        .skip(start)
+        .limit(length)
+        .populate('category');
 
-    res.render('itemInventory', {
-      items,
-      currentPage: page,
-      totalPages,
-      itemsPerPage, // Pass itemsPerPage to the view
-      categories, // Pass categories to the view
-      announcements // Pass announcements to the view
-    });
+      const data = items.map(item => ({
+        ...item.toObject(),
+        category: item.category || { _id: null, name: 'Unassigned' }
+      }));
+
+      return res.json({
+        draw: draw,
+        recordsTotal: totalItems,
+        recordsFiltered: totalItems,
+        data: data
+      });
+    } else {
+      // Handle initial page render
+      const page = parseInt(req.query.page) || 1;
+      const itemsPerPage = 10; // You can make this configurable if needed
+      const skip = (page - 1) * itemsPerPage;
+
+      const items = await ItemInventory.find(query)
+        .skip(skip)
+        .limit(itemsPerPage)
+        .populate('category');
+
+      const categories = await Category.find();
+      const announcements = await Announcement.find();
+
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+      res.render('itemInventory', {
+        items: items,
+        currentPage: page,
+        totalPages: totalPages,
+        itemsPerPage: itemsPerPage,
+        categories: categories,
+        announcements: announcements
+      });
+    }
   } catch (error) {
-    console.error('Error fetching items:', error.message); // Improved error logging
+    console.error('Error in getItems:', error);
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.status(500).json({ error: 'Server Error', details: error.message });
+    }
     res.status(500).send('Server Error');
   }
 };
@@ -42,6 +86,8 @@ exports.getItems = async (req, res) => {
 exports.addItem = async (req, res) => {
   try {
     const { itemName, category, serialNumber, quantity, inDate } = req.body;
+    console.log('Received item data:', req.body);
+
     const newItem = new ItemInventory({
       itemName,
       category,
@@ -49,11 +95,14 @@ exports.addItem = async (req, res) => {
       quantity,
       inDate
     });
-    await newItem.save();
-    res.json({ success: true });
+
+    const savedItem = await newItem.save();
+    console.log('Item saved successfully:', savedItem);
+
+    sendJsonResponse(res, 201, { success: true, item: savedItem });
   } catch (error) {
-    console.error('Error adding item:', error.message);
-    res.status(500).json({ success: false, error: error.message });
+    console.error('Error adding item:', error);
+    sendJsonResponse(res, 500, { success: false, error: error.message });
   }
 };
 
@@ -61,22 +110,29 @@ exports.addItem = async (req, res) => {
 exports.updateItem = async (req, res) => {
   try {
     const { _id, itemName, category, serialNumber, quantity, inDate } = req.body;
+
+    const categoryExists = category ? await Category.findById(category) : false;
+
+    if (!categoryExists && category) {
+      return sendJsonResponse(res, 400, { success: false, error: 'Selected category does not exist' });
+    }
+
     const updatedItem = await ItemInventory.findByIdAndUpdate(_id, {
       itemName,
-      category,
+      category: categoryExists ? category : null,
       serialNumber,
       quantity,
       inDate
     }, { new: true });
 
     if (updatedItem) {
-      res.json({ success: true });
+      sendJsonResponse(res, 200, { success: true, item: updatedItem });
     } else {
-      res.status(404).json({ success: false, error: 'Item not found' });
+      sendJsonResponse(res, 404, { success: false, error: 'Item not found' });
     }
   } catch (error) {
-    console.error('Error updating item:', error.message);
-    res.status(500).json({ success: false, error: error.message });
+    console.error('Error updating item:', error);
+    sendJsonResponse(res, 500, { success: false, error: error.message });
   }
 };
 
@@ -87,12 +143,12 @@ exports.deleteItem = async (req, res) => {
     const deletedItem = await ItemInventory.findByIdAndDelete(id);
 
     if (deletedItem) {
-      res.json({ success: true });
+      sendJsonResponse(res, 200, { success: true });
     } else {
-      res.status(404).json({ success: false, error: 'Item not found' });
+      sendJsonResponse(res, 404, { success: false, error: 'Item not found' });
     }
   } catch (error) {
-    console.error('Error deleting item:', error.message);
-    res.status(500).json({ success: false, error: error.message });
+    console.error('Error deleting item:', error);
+    sendJsonResponse(res, 500, { success: false, error: error.message });
   }
 };

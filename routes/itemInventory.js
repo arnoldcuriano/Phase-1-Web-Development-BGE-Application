@@ -1,18 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const ItemInventoryController = require('../controllers/itemInventoryController'); // Correct path
-const Announcement = require('../models/Announcement'); // Import Announcement model
+const ItemInventoryController = require('../controllers/itemInventoryController');
+const Announcement = require('../models/Announcement');
 
-// Route to add a new item
+// Ensure routes are correctly mapped
 router.post('/add', ItemInventoryController.addItem);
-
-// Route to update an existing item
 router.put('/update', ItemInventoryController.updateItem);
-
-// Route to delete an item
 router.delete('/delete/:id', ItemInventoryController.deleteItem);
 
-router.get('/', ItemInventoryController.getItems);// To get the items and render the view
+// The key route where DataTables fetches data
+router.post('/data', ItemInventoryController.getItems); // This is the crucial route for DataTables
 
+router.get('/', ItemInventoryController.getItems);
 
 module.exports = router;
