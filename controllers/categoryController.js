@@ -1,83 +1,114 @@
 const Category = require('../models/Category');
+const Announcement = require('../models/Announcement'); // Import the Announcement model
 
-// Fetch paginated categories with their parent categories
-exports.fetchCategories = async (req) => {
-  const limit = 10; // Number of categories per page
-  const page = parseInt(req.query.page) || 1; // Current page number
+// Get categories and announcements
+exports.getCategories = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8;
+    const skip = (page - 1) * limit;
 
-  const totalCategories = await Category.countDocuments();
-  const totalPages = Math.ceil(totalCategories / limit);
+    const totalCategories = await Category.countDocuments({ parent: null });
+    const totalPages = Math.ceil(totalCategories / limit);
 
-  const categories = await Category.find()
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .populate('parent');
+    const parentCategories = await Category.find({ parent: null })
+      .skip(skip)
+      .limit(limit)
+      .lean();
 
-  return { categories, totalPages, currentPage: page };
-};
+    const allCategories = await Category.find().lean();
 
-// Add a new category
-exports.addCategory = async (req, res) => {
-  const { name, parent, description } = req.body;
-  const newCategory = new Category({ name, parent, description });
+    // Fetch announcements
+    const announcements = await Announcement.find();
 
-  await newCategory.save();
-  res.status(200).json({ success: true });
-};
-
-// Update an existing category
-exports.updateCategory = async (req, res) => {
-  const { id, name, parent, description, active } = req.body;
-
-  await Category.findByIdAndUpdate(id, { name, parent, description, active });
-  res.status(200).json({ success: true });
-};
-
-// Check if a category has child categories and provide reassignment options
-exports.checkChildCategories = async (req, res) => {
-  const categoryId = req.params.id;
-  const childCategories = await Category.find({ parent: categoryId });
-
-  if (childCategories.length > 0) {
-    res.status(200).json({ success: true, childCategories });
-  } else {
-    res.status(200).json({ success: true, message: 'No child categories found' });
-  }
-};
-
-// Delete a category by ID with child category reassignment or deletion
-exports.deleteCategory = async (req, res) => {
-  const categoryId = req.params.id;
-  const { reassignTo } = req.body;
-
-  // Find all child categories of the category to be deleted
-  const childCategories = await Category.find({ parent: categoryId });
-
-  if (childCategories.length > 0 && !reassignTo) {
-    return res.status(400).json({
-      success: false,
-      message: 'Cannot delete category with child categories without reassignment or deletion.',
+    // Build parent-child relationships and calculate child counts
+    const categoriesMap = {};
+    allCategories.forEach(category => {
+      categoriesMap[category._id.toString()] = { ...category, children: [] };
     });
-  }
 
-  if (reassignTo) {
-    // Reassign child categories to a new parent
-    const reassignmentExists = await Category.exists({ _id: reassignTo });
-    if (!reassignmentExists) {
-      return res.status(400).json({ success: false, message: 'Invalid reassignment category' });
+    allCategories.forEach(category => {
+      if (category.parent) {
+        const parentId = category.parent.toString();
+        if (categoriesMap[parentId]) {
+          categoriesMap[parentId].children.push(category);
+        }
+      }
+    });
+
+    const categories = parentCategories.map(parent => {
+      const fullParent = categoriesMap[parent._id.toString()];
+      fullParent.childCount = fullParent.children.length;
+      return fullParent;
+    });
+
+    res.render('categories', {
+      categories,
+      allCategories,
+      user: req.user,
+      currentPage: page,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+      announcements // Pass announcements to the EJS template
+    });
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).send('Error fetching categories');
+  }
+};
+
+exports.addOrUpdateCategory = async (req, res) => {
+  try {
+    const { id, name, parent, description } = req.body;
+
+    if (id) {
+      // Update existing category
+      await Category.findByIdAndUpdate(id, { name, parent: parent || null, description });
+    } else {
+      // Add new category
+      const newCategory = new Category({ name, parent: parent || null, description });
+      await newCategory.save();
     }
-    await Category.updateMany({ parent: categoryId }, { parent: reassignTo });
-  } else {
-    // Delete all child categories
-    await Category.deleteMany({ parent: categoryId });
+
+    res.redirect('/it/category-management');
+  } catch (error) {
+    res.status(500).send('Error saving category');
   }
+};
 
-  // Delete the parent category
-  const result = await Category.findByIdAndDelete(categoryId);
+exports.deleteCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.id;
+    const { reassignTo } = req.body;
 
-  if (result) {
-    res.json({ success: true, message: 'Category deleted successfully' });
-  } else {
-    res.status(404).json({ success: false, message: 'Category not found' });
+    // Find the category to be deleted
+    const categoryToDelete = await Category.findById(categoryId);
+
+    if (!categoryToDelete) {
+      return res.status(404).json({ success: false, message: 'Category not found' });
+    }
+
+    // Check if the category has children
+    const childCategories = await Category.find({ parent: categoryId });
+
+    if (childCategories.length > 0) {
+      if (reassignTo) {
+        // Reassign children to the new parent category
+        await Category.updateMany({ parent: categoryId }, { parent: reassignTo });
+      } else {
+        // Make child categories parent categories
+        await Category.updateMany({ parent: categoryId }, { $unset: { parent: 1 } });
+      }
+    }
+
+    // Delete the specified category
+    await Category.findByIdAndDelete(categoryId);
+    console.log('Deleted category:', categoryId);
+
+    res.status(200).json({ success: true, message: 'Category deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    res.status(500).json({ success: false, message: 'Error deleting category', details: error.message });
   }
 };
