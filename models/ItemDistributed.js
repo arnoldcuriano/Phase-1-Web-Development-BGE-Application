@@ -1,11 +1,20 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const ItemDistributedSchema = new mongoose.Schema({
-  member: { type: mongoose.Schema.Types.ObjectId, ref: 'Member', required: true },
-  department: { type: mongoose.Schema.Types.ObjectId, ref: 'Department', required: true },
-  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
-  quantity: { type: Number, required: true },
-  date: { type: Date, default: Date.now }
+const ItemDistributedSchema = new Schema({
+  member: { type: Schema.Types.ObjectId, ref: 'Member' },
+  department: { type: Schema.Types.ObjectId, ref: 'Department' },
+  category: { type: Schema.Types.ObjectId, ref: 'Category' },
+  qty: { 
+    type: [Number], 
+    required: true,
+    get: v => v.join(','),
+    set: v => Array.isArray(v) ? v : v.split(',').map(Number)
+  },
+  outDate: { type: Date, default: Date.now },
+  items: [{ type: Schema.Types.ObjectId, ref: 'ItemInventory' }]
 });
+
+ItemDistributedSchema.set('toJSON', { getters: true });
 
 module.exports = mongoose.model('ItemDistributed', ItemDistributedSchema);

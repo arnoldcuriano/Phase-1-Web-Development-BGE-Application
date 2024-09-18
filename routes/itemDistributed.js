@@ -6,6 +6,6 @@ const itemDistributedController = require('../controllers/itemDistributedControl
 router.get('/', itemDistributedController.getItems);
 router.post('/add', itemDistributedController.addItem);
 router.post('/update', itemDistributedController.updateItem);
-router.post('/delete/:id', itemDistributedController.deleteItem);
+router.delete('/delete/:id', itemDistributedController.deleteItem);
 
 module.exports = router;
