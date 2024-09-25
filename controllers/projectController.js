@@ -1,6 +1,7 @@
 // controllers/projectController.js
 const Project = require('../models/Project');
 const Department = require('../models/Department');
+const Announcement = require('../models/Announcement'); // Import Announcement model
 const fs = require('fs');
 const path = require('path');
 
@@ -10,10 +11,11 @@ exports.getProjects = async (req, res) => {
     const limit = 10; // Number of projects per page
     const skip = (page - 1) * limit;
 
-    const [projects, totalProjects, departments] = await Promise.all([
+    const [projects, totalProjects, departments, announcements] = await Promise.all([
       Project.find().populate('departmentHandler').skip(skip).limit(limit),
       Project.countDocuments(),
-      Department.find()
+      Department.find(),
+      Announcement.find() // Fetch all announcements
     ]);
 
     const totalPages = Math.ceil(totalProjects / limit);
@@ -21,6 +23,7 @@ exports.getProjects = async (req, res) => {
     res.render('projects', {
       projects,
       departments,
+      announcements, // Pass announcements to the view
       user: req.user || { profilePicture: '', name: 'Guest' }, // Ensure user is passed
       currentPage: page,
       totalPages,
