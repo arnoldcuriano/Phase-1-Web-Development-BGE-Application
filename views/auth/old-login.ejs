@@ -11,7 +11,7 @@
     <title>BGE Internal App</title>
     <link rel="icon" type="image/x-icon" href="images/bge-logo-favicon.png">
     <style>
-        html, body {
+        html, body { 
             height: 100%;
             margin: 0;
             font-family: "Poppins", sans-serif;
@@ -19,46 +19,37 @@
         }
         body {
             display: flex;
-            flex-direction: column;
-            background: linear-gradient(to right, #43cea2, #185a9d);
+            background: linear-gradient(to right, #43cea2 50%, #185a9d 50%);
         }
         .left-panel, .right-panel {
-            width: 100%;
+            width: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .left-panel, .right-panel {
+            width: 50%;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
         }
         .left-panel {
             background: linear-gradient(to bottom, #43cea2, #185a9d);
             color: white;
-            position: relative;
-            overflow: hidden;
-            order: 2;
+            padding: 40px;
+            box-sizing: border-box;
         }
         .left-panel h1 {
-            font-size: 36px;
-            margin-bottom: 20px;
-            text-align: center;
+            font-size: 48px;
+            margin-bottom: 30px;
         }
         .left-panel .item {
             display: flex;
             align-items: center;
-            margin: 10px 0;
+            margin: 3px 0;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             padding: 15px;
-            text-decoration: none;
-            color: white;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-            max-width: 400px;
-        }
-        .left-panel .item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         .left-panel .item img {
             width: 24px;
@@ -84,15 +75,16 @@
         }
         .right-panel {
             background: #f0f0f0;
+            display: flex;
+            justify-content: center;
             align-items: center;
             position: relative;
-            order: 1;
         }
         .right-panel img.logo {
             position: absolute;
             top: 20px;
             left: 20px;
-            width: 100px;
+            width: 150px; /* Adjust the width as needed */
         }
         .login-form {
             width: 100%;
@@ -151,44 +143,102 @@
             border-radius: 8px;
             padding: 5px;
             background: rgba(255, 255, 255, 0.2);
+            border-radius: 8x;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(2px);
             -webkit-backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        .version {
+        /*  parallax*/
+        .left-panel {
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .water-effect {
             position: absolute;
-            bottom: 10px;
-            left: 10px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                circle at var(--mouse-x) var(--mouse-y),
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0) 50%
+            );
+            mix-blend-mode: screen;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            opacity: 0;
         }
-        @media (min-width: 768px) {
-            body {
-                flex-direction: row;
-            }
-            .left-panel, .right-panel {
-                width: 50%;
-                height: 100%;
-            }
-            .left-panel {
-                order: 1;
-            }
-            .right-panel {
-                order: 2;
-            }
-            .right-panel img.logo {
-                width: 150px;
-            }
+
+        .left-panel:hover .water-effect {
+            opacity: 1;
         }
-        @media (min-width: 1024px) {
-            .left-panel .item {
-                max-width: 600px;
-            }
+
+        .left-panel .item {
+            position: relative;
+            transition: transform 0.3s ease;
         }
+
+        .left-panel .item:hover {
+            transform: translateX(10px);
+            border-radius: 10px;
+        }
+
+        .left-panel .item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                circle at right center,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0) 70%
+            );
+            opacity: 0;
+            transition: opacity 0.3s ease;
+          
+        }
+
+        .left-panel .item:hover::after {
+            opacity: 1;
+        }
+
     </style>
 </head>
 <body>
+    <div class="left-panel">
+        <h1>Welcome back</h1>
+        <div class="water-effect"></div>
+       <div class="item">
+           <img src="/images/icons8-globe-50.png" alt="Icon" class="icon"></a>
+          <div>
+                <p class="title">Visit our Main Website</p>
+                <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            </div>
+            <div class="arrow">&rarr;</div>
+        </div>
+        <div class="item">
+            <a href="https://app.greatdayhr.com/" target="_blank"><img src="/images/icons8-time-50.png" alt="Icon" class="icon"></a>
+            <div>
+                <p class="title">Login to your GreatDay Account</p>
+                <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            </div>
+            <div class="arrow">&rarr;</div>
+        </div>
+        <div class="item">
+            <a href="#" target="_blank"><img src="/images/icons8-ticket-64.png" alt="Icon" class="icon"></a>
+            <div>
+                <p class="title">Need Support?</p>
+                <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            </div>
+            <div class="arrow">&rarr;</div>
+        </div>
+    </div>
     <div class="right-panel">
         <img src="/images/bge-logo-tr.png" alt="BGE Logo" class="logo">
         <div class="login-form">
@@ -204,36 +254,21 @@
                 <img src="/images/icons8-google-48.png" alt="Google">
                 <span>Google</span>
             </div>
-            <a href="./signup.ejs">Don't have an Account? Signup</a>
+            <a href="./signup.ejs">Don’t have an Account? Signup</a>
         </div>
     </div>
-    <div class="left-panel">
-        <h1>Welcome back</h1>
-        <a href="https://beglobalecommercecorp.com/" target="_blank" class="item">
-            <img src="/images/icons8-globe-50.png" alt="Icon" class="icon">
-            <div>
-                <p class="title">Visit our Main Website</p>
-                <p class="description">Explore our main website for the latest updates and resources to help you thrive.</p>
-            </div>
-            <div class="arrow">&rarr;</div>
-        </a>
-        <a href="https://app.greatdayhr.com/" target="_blank" class="item">
-            <img src="/images/icons8-time-50.png" alt="Icon" class="icon">
-            <div>
-                <p class="title">Login to your GreatDay Account</p>
-                <p class="description">Access your GreatDay account to manage your attendace or any related concern.</p>
-            </div>
-            <div class="arrow">&rarr;</div>
-        </a>
-        <a href="mailto:arnoldcuriano.bgecorp@gmail.com" class="item">
-            <img src="/images/icons8-ticket-64.png" alt="Icon" class="icon">
-            <div>
-                <p class="title">Need Support? or Have a Feedback</p>
-                <p class="description">We're here to help! Reach out for support or share your feedback with us.</p>
-            </div>
-            <div class="arrow">&rarr;</div>
-        </a>
-        <div class="version">Beta test Version 1.0.0</div>
-    </div>
+    <script>
+        const leftPanel = document.querySelector('.left-panel');
+        const waterEffect = document.querySelector('.water-effect');
+
+        leftPanel.addEventListener('mousemove', (e) => {
+            const rect = leftPanel.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            waterEffect.style.setProperty('--mouse-x', `${x}px`);
+            waterEffect.style.setProperty('--mouse-y', `${y}px`);
+        });
+    </script>
 </body>
 </html>
